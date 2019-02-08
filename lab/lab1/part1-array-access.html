@@ -57,8 +57,8 @@
     ===================== */
 
     var map = L.map('map', {
-      center: [39.9522, -75.1639],
-      zoom: 14
+      center: [39.9786522,-75.1357365],//Adjusted to center over my sites
+      zoom: 13//Adjusted so it captures all my sites in map
     });
 
     var Stamen_TonerLite = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
@@ -75,9 +75,30 @@
 
     ===================== */
 
-    L.marker([0, 0]).addTo(map);
-    L.marker([0, 0]).addTo(map);
-    L.marker([0, 0]).addTo(map);
+//Tasks 1 and 3:
+var restaurantData = [
+    {"lat":39.933750,"lng":-75.1585709,"label":"Genos Philly",}, //Task 1
+    {"lat":39.953469,"lng":-75.187248,"label":"Wahoo Tacos",}, //Task 1
+    {"lat":39.953707,"lng":-75.194854,"label":"PENN Bookstore Cafe"}, //Task 1
+    {"lat":40.006721,"lng":-75.090928,"label":"Chickies & Petes"}, //Task 3
+    {"lat":39.9561944,"lng":-75.1686854,"label":"TGI Fridays"} //Task 3
+    ];
+
+//Task 2:
+for (var i=0; i <restaurantData.length; i = i+1) {
+    console.log(restaurantData[i])
+    }
+
+//Task 4:
+var makeAMarker = (obj) => {
+    return L.marker([obj.lat, obj.lng]).bindPopup(obj.label)
+    }
+
+for (var i=0; i <restaurantData.length; i = i+1) {
+    makeAMarker(restaurantData[i]).addTo(map)
+    }
+
+//Adjusted center and zoom above to capture all of my sites
 
     /* =====================
 

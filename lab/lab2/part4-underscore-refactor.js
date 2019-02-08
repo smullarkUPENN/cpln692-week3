@@ -30,7 +30,7 @@
   // Filter according to enrollment that is greater than this variable:
   var minEnrollment = 300;
 
-
+  /* =====================
   // clean data
   for (var i = 0; i < schools.length - 1; i++) {
     // If we have '19104 - 1234', splitting and taking the first (0th) element
@@ -40,6 +40,8 @@
       normalized_zip = parseInt(split[0]);
       schools[i].ZIPCODE = normalized_zip;
     }
+
+
 
     // Check out the use of typeof here — this was not a contrived example.
     // Someone actually messed up the data entry
@@ -55,7 +57,30 @@
       schools[i].HAS_HIGH_SCHOOL = schools[i].GRADE_LEVEL.toUpperCase().indexOf('HIGH') >= 0;
     }
   }
+  ===================== */
+//Worked with Ian Schwarzenberg
+//Thank you for the sample code Ross!
+//Edited your samplecode to include edited if statements...removed [i]s but kept rest
+  _.each(schools, function(schools) {
+   if (typeof schools.ZIPCODE === 'string') {
+     split = schools.ZIPCODE.split(' ');
+     normalized_zip = parseInt(split[0]);
+     schools.ZIPCODE = normalized_zip;
+   }
+   if (typeof schools.GRADE_ORG === 'number') {  // if number
+     schools.HAS_KINDERGARTEN = schools.GRADE_LEVEL < 1;
+     schools.HAS_ELEMENTARY = 1 < schools.GRADE_LEVEL < 6;
+     schools.HAS_MIDDLE_SCHOOL = 5 < schools.GRADE_LEVEL < 9;
+     schools.HAS_HIGH_SCHOOL = 8 < schools.GRADE_LEVEL < 13;
+   } else {  // otherwise (in case of string)
+     schools.HAS_KINDERGARTEN = schools.GRADE_LEVEL.toUpperCase().indexOf('K') >= 0;
+     schools.HAS_ELEMENTARY = schools.GRADE_LEVEL.toUpperCase().indexOf('ELEM') >= 0;
+     schools.HAS_MIDDLE_SCHOOL = schools.GRADE_LEVEL.toUpperCase().indexOf('MID') >= 0;
+     schools.HAS_HIGH_SCHOOL = schools.GRADE_LEVEL.toUpperCase().indexOf('HIGH') >= 0;
+   }
+ })
 
+ /* =====================
   // filter data
   var filtered_data = [];
   var filtered_out = [];
@@ -82,7 +107,38 @@
   }
   console.log('Included:', filtered_data.length);
   console.log('Excluded:', filtered_out.length);
+  ===================== */
+  //Similar to above I replaced for statement with _.each
+  //Removed [i]s in ifbut kept rest
 
+  var filtered_data = [];
+  var filtered_out = [];
+  _.each(schools, function(schools) {
+    isOpen = schools.ACTIVE.toUpperCase() == 'OPEN';
+    isPublic = (schools.TYPE.toUpperCase() !== 'CHARTER' ||
+                schools.TYPE.toUpperCase() !== 'PRIVATE');
+    isSchool = (schools.HAS_KINDERGARTEN ||
+                schools.HAS_ELEMENTARY ||
+                schools.HAS_MIDDLE_SCHOOL ||
+                schools.HAS_HIGH_SCHOOL);
+    meetsMinimumEnrollment = schools.ENROLLMENT > minEnrollment;
+    meetsZipCondition = acceptedZipcodes.indexOf(schools.ZIPCODE) >= 0;
+    filter_condition = (isOpen &&
+                        isSchool &&
+                        meetsMinimumEnrollment &&
+                        !meetsZipCondition);
+
+    if (filter_condition) {
+      filtered_data.push(schools);
+    } else {
+      filtered_out.push(schools);
+    }
+  })
+  console.log('Included:', filtered_data.length);
+  console.log('Excluded:', filtered_out.length);
+
+
+ /* =====================
   // main loop
   var color;
   for (var i = 0; i < filtered_data.length - 1; i++) {
@@ -106,5 +162,33 @@
       .bindPopup(filtered_data[i].FACILNAME_LABEL)
       .addTo(map);
   }
+
+})();
+  ===================== */
+//Similar to above I replaced for statement with _.each
+//Removed [i]s but kept rest
+
+  var color;
+  _.each(filtered_data, function(filtered_data) {
+    isOpen = filtered_data.ACTIVE.toUpperCase() == 'OPEN';
+    isPublic = (filtered_data.TYPE.toUpperCase() !== 'CHARTER' ||
+                filtered_data.TYPE.toUpperCase() !== 'PRIVATE');
+    meetsMinimumEnrollment = filtered_data.ENROLLMENT > minEnrollment;
+
+    // Constructing the styling  options for our map
+    if (filtered_data.HAS_HIGH_SCHOOL){
+      color = '#0000FF';
+    } else if (filtered_data.HAS_MIDDLE_SCHOOL) {
+      color = '#00FF00';
+    } else {
+      color = '##FF0000';
+    }
+    // The style options
+    var pathOpts = {'radius': filtered_data.ENROLLMENT / 30,
+                    'fillColor': color};
+    L.circleMarker([filtered_data.Y, filtered_data.X], pathOpts)
+      .bindPopup(filtered_data.FACILNAME_LABEL)
+      .addTo(map);
+  })
 
 })();

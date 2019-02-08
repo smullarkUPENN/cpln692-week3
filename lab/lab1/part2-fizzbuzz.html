@@ -27,7 +27,26 @@
 
     ===================== */
 
-
+    //Code support found via: https://stackoverflow.com/questions/13845437/from-1-to-100-print-ping-if-multiple-of-3-pong-if-multiple-of-5-or-else-p
+    //Worked with Ian Schwarzenberg
+    for (var x=1; x <= 100; x++) {
+          var skip = 0;
+          if (x % 15 == 0) {
+              console.log('FizzBuzz');
+              skip = 1;
+          }//produces FizzBuzz for multiples of 3 and 5
+          else if (x % 5 == 0) {
+              console.log('Buzz');
+              skip = 1;
+          }//produces Buzz for multiples of 5...else excludes those with multiples of 3 and 5
+          else if (x % 3 == 0) {
+              console.log('Fizz');
+              skip = 1;
+          }//produces Fizz for multiples of 3...else excludes those with multiples of 3 and 5
+          if (!skip) {
+              console.log(x);
+          }//produces x that do not fit above criteria
+      };
 
     /* =====================
 
