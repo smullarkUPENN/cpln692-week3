@@ -183,7 +183,7 @@
     } else {
       color = '##FF0000';
     }
-    // The style options 
+    // The style options  
     var pathOpts = {'radius': filtered_data.ENROLLMENT / 30,
                     'fillColor': color};
     L.circleMarker([filtered_data.Y, filtered_data.X], pathOpts)
